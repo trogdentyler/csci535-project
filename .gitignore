@@ -5,6 +5,8 @@ __pycache__/
 **/.DS_Store
 **/test*
 **/x86_64/*
+**/python_recordings/*
+**/morphology/*
 
 # Distribution / packaging
 bin/

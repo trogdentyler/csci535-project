@@ -1,6 +1,0 @@
-# Title
-
-## Authors
-## Date
-
-## Sections
