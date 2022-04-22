@@ -52,7 +52,7 @@ def create_cell(add_synapses=True):
 
     # Instantiate the cell from the template
 
-    print "Loading cell bNAC219_L1_DAC_ec2fc5f0de"
+    print("Loading cell bNAC219_L1_DAC_ec2fc5f0de")
     cell = neuron.h.bNAC219_L1_DAC_ec2fc5f0de(1 if add_synapses else 0)
     return cell
 
