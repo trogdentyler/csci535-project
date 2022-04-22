@@ -10,6 +10,8 @@ class MyCell:
         morph_reader.input(file)
         i3d = h.Import3d_GUI(morph_reader, 0)
         i3d.instantiate(self)
+        asc_secs = i3d.asc.sections
+        asc_secs = [asc_secs.object(i) for i in range(int(asc_secs.count()))]
 
 file = 'data/C060600A2.ASC'
 m = MyCell(file)
