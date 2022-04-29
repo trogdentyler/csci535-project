@@ -58,10 +58,37 @@ def main():
     #                     # n = Node("L1")
     #                     count-=1
 
- 
 
-if __name__ == "__main__":
-    main()
+f1 = open('circuit_data/layer_download.json')
+f2 = open('circuit_data/pathways_anatomy_factsheets_simplified.json')
+f3 = open('circuit_data/pathways_physiology_factsheets_simplified.json')
+
+layer_data = json.load(f1)
+ana_data = json.load(f2)
+phys_data = json.load(f3)
+
+f1.close()
+f2.close()
+f3.close()
+
+layer_counts = {}
+nodes = {}
+cell_connections = {}
+connections_prob = {}
+
+layers = [key for key, value in layer_data.items()]
+
+for layer in layers:
+    layer_counts[layer] = layer_data[layer]["No. of neurons per morphological types"]
+
+
+for key, value in layer_counts.items():
+    for k, v in value.items():
+        cell_connections[k] = [key for key, value in ana_data.items() if k in key]
+        for key, value in ana_data.items():
+            if k in key:
+                connections_prob[key] = value["connection_probability"]
+
 
 
 class Node:
@@ -74,4 +101,9 @@ class Node:
     def addConnection(self, node):
         self.connections.append(node)
 
-        
+    def __repr__(self):
+        return super(Node, self).__repr__()[:-1] + f" {self.layer} {self.type} {self.connections}>"
+
+
+if __name__ == "__main__":
+    main()
