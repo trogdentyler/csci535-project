@@ -1,6 +1,6 @@
 
 import json
-import re
+import random
 
 def main():
 
@@ -18,18 +18,46 @@ def main():
     f2.close()
     f3.close()
 
+    layer_counts = {}
+    nodes = {}
+    cell_connections = {}
+    connections_prob = {}
 
     layers = [key for key, value in layer_data.items()]
 
     for layer in layers:
-        type_count = layer_data[layer]["No. of neurons per morphological types"]
-        print(layer + " " +str(type_count))
-        
+        layer_counts[layer] = layer_data[layer]["No. of neurons per morphological types"]
 
-    l1_connections = [key for key, value in ana_data.items() if 'l1' in key.lower()]
-    l1_neurons = [value for key, value in ana_data.items() if 'l1' in key.lower()]
 
-    # print(type_count)
+    print(layer_counts)
+
+    for key, value in layer_counts.items():
+        for k, v in value.items():
+            cell_connections[k] = [key for key, value in ana_data.items() if k in key]
+            for key, value in ana_data.items():
+                if k in key:
+                    connections_prob[key] = value["connection_probability"]
+
+    print(layer_counts)      
+    print(cell_connections)
+    print(connections_prob)
+
+    # for k1, v1 in l1_counts:
+    #     count = v1
+    #     while count !=0:
+    #         nodes.append(Node("L1", k1))
+    
+    # for k1, v1 in l1_counts:
+    #     count = v1
+    #     for k2, v2 in cell_connections:
+    #         if k1 in k2:
+    #             while count != 0:
+    #                 prob  = connections_prob[k2]
+    #                 r = random.randrange(0, 100)
+    #                 if r < prob:
+    #                     # n = Node("L1")
+    #                     count-=1
+
  
 
 if __name__ == "__main__":
@@ -45,4 +73,5 @@ class Node:
 
     def addConnection(self, node):
         self.connections.append(node)
+
         
