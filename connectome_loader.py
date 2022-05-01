@@ -29,11 +29,14 @@ class SimplexHasse:
     def __init__(self, me_types: list, h5_data):
         self.h5 = h5_data
 
+        if len(me_types) == 0:
+            me_types = [key for key in h5["connectivity"]]
+
         # make a key dictionary to quickly look up order
         self.type_order = [key for key in me_types]  # TODO remove this as list is now passed in directly
         self.type_order.sort()
         self.type_to_int = {self.type_order[i]: i for i in range(len(self.type_order))}
-        self.number_of_type = {me_type: self.h5["connectivity"][self.type_order[0]][me_type]['cMat'].shape[0]
+        self.number_of_type = {me_type: self.h5["connectivity"][me_type][self.type_order[0]]['cMat'].shape[0]
                                for me_type in self.type_order}
         self.type_base = {me_type: sum([self.number_of_type[self.type_order[i]]
                                         for i in range(self.type_to_int[me_type])])
@@ -150,9 +153,10 @@ class SimplexHasse:
                     f.write(" ".join(str_simplex) + "\n")
 
 if __name__ == "__main__":
-    test = SimplexHasse(["L4_MC"], h5)
+    test = SimplexHasse(["L4_NGC"], h5)
     non_full_test = test.make_hasse(full=False)
     full_test = test.make_hasse(full=True)
-    test.get_flag_file("test.flag", full=False)
+    test.get_flag_file("test_NGC.flag", full=False)
+    test2 = SimplexHasse([], h5)
     print("DONE")
 
