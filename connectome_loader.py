@@ -3,18 +3,26 @@ import numpy as np
 import bisect
 
 h5 = h5py.File("circuit_data/connectome_data/cons_locs_pathways_mc6_Column/cons_locs_pathways_mc6_Column.h5")
-count = False
+count = True
 
 if count:
     number_of_connection = 0
     number_of_neurons = 0
+    min_arg = "L4_MC"
+    min = 118
     for m_type1 in h5["connectivity"]:
+        number_of_neurons += h5["connectivity"][m_type1]["L4_MC"]['cMat'].shape[0]
+        if h5["connectivity"][m_type1]["L4_MC"]['cMat'].shape[0] < min:
+            min = h5["connectivity"][m_type1]["L4_MC"]['cMat'].shape[0]
+            min_arg = str(m_type1)
         for m_type2 in h5["connectivity"][m_type1]:
             number_of_connection += np.sum(h5["connectivity"][m_type1][m_type2]['cMat'])
-            number_of_neurons += h5["connectivity"][m_type1][m_type2]['cMat'].shape[0]
 
     print(f"Number of connection: {number_of_connection}")
     print(f"Number of Neurons: {number_of_neurons}")
+    print(f"Least Neuron type: {min_arg}")
+    print(f"Least Neuron amount: {min}")
+
 
 
 class SimplexHasse:
@@ -129,10 +137,22 @@ class SimplexHasse:
                 break
             return dim_list
 
+    def get_flag_file(self, output_file, full=True):
+        with open(output_file, "w") as f:
+            dim_list = self.make_hasse(full=full)
+            f.write("dim 0\n")
+            dim0 = " ".join(["0" for i in dim_list[0]]) + "\n"
+            f.write(dim0)
+            for i in range(1,len(dim_list)):
+                f.write(f"dim {i}\n")
+                for simplex in dim_list[i]:
+                    str_simplex = [str(i) for i in simplex]
+                    f.write(" ".join(str_simplex) + "\n")
 
 if __name__ == "__main__":
     test = SimplexHasse(["L4_MC"], h5)
     non_full_test = test.make_hasse(full=False)
     full_test = test.make_hasse(full=True)
+    test.get_flag_file("test.flag", full=False)
     print("DONE")
 
