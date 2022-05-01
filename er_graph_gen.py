@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 n = 10000  
-m = 0.04 * n * (n-1)  
+m = 0.004 * n * (n-1)  
 G = nx.gnm_random_graph(n, m)
 
 print("here")
