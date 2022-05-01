@@ -23,20 +23,42 @@ if count:
     print(f"Least Neuron type: {min_arg}")
     print(f"Least Neuron amount: {min}")
 
+neuron_types = ['L1_DAC', 'L1_DLAC', 'L1_HAC', 'L1_NGC-DA', 'L1_NGC-SA', 'L1_SLAC', 'L23_BP', 'L23_BTC', 'L23_ChC',
+                'L23_DBC', 'L23_LBC', 'L23_MC', 'L23_NBC', 'L23_NGC', 'L23_PC', 'L23_SBC', 'L4_BP', 'L4_BTC', 'L4_ChC',
+                'L4_DBC', 'L4_LBC', 'L4_MC', 'L4_NBC', 'L4_NGC', 'L4_PC', 'L4_SBC', 'L4_SP', 'L4_SS', 'L5_BP', 'L5_BTC',
+                'L5_ChC', 'L5_DBC', 'L5_LBC', 'L5_MC', 'L5_NBC', 'L5_NGC', 'L5_SBC', 'L5_STPC', 'L5_TTPC1', 'L5_TTPC2',
+                'L5_UTPC', 'L6_BP', 'L6_BPC', 'L6_BTC', 'L6_ChC', 'L6_DBC', 'L6_IPC', 'L6_LBC', 'L6_MC', 'L6_NBC',
+                'L6_NGC', 'L6_SBC', 'L6_TPC_L1', 'L6_TPC_L4', 'L6_UTPC']
 
 
 class SimplexHasse:
-    def __init__(self, me_types: list, h5_data):
-        self.h5 = h5_data
+    def __init__(self, layers: list, me_types: list, cMat_data, is_h5=False):
 
-        if len(me_types) == 0:
-            me_types = [key for key in h5["connectivity"]]
+        if len(me_types) == 0 and len(layers) == 0:
+            me_types = neuron_types.copy()
+
+        for key in neuron_types:
+            layer = str(key).split("_")[0]
+            if layer in layers:
+                if key in me_types:
+                    pass
+                else:
+                    me_types.append(key)
+
+        if is_h5:
+            self.cMat = dict()
+            for me_type1 in me_types:
+                self.cMat[me_type1] = dict()
+                for me_type2 in me_types:
+                    self.cMat[me_type1][me_type2] = np.array(cMat_data["connectivity"][me_type1][me_type2]['cMat'])
+        else:
+            self.cMat = cMat_data
 
         # make a key dictionary to quickly look up order
-        self.type_order = [key for key in me_types]  # TODO remove this as list is now passed in directly
+        self.type_order = me_types.copy()
         self.type_order.sort()
         self.type_to_int = {self.type_order[i]: i for i in range(len(self.type_order))}
-        self.number_of_type = {me_type: self.h5["connectivity"][me_type][self.type_order[0]]['cMat'].shape[0]
+        self.number_of_type = {me_type: len(self.cMat[me_type][self.type_order[0]])
                                for me_type in self.type_order}
         self.type_base = {me_type: sum([self.number_of_type[self.type_order[i]]
                                         for i in range(self.type_to_int[me_type])])
@@ -61,7 +83,7 @@ class SimplexHasse:
         """
         return self.type_base[neuron_type] + pos
 
-    def are_connected(self, neuron1: int, neuron2: int):
+    def are_connected(self, neuron1: int, neuron2: int) -> bool:
         """ Determine if two neuron (record as ints) have a connection in the loaded connectome column.
             Looks for a connection starting a neuron1 and heading to neuron2
         """
@@ -69,9 +91,9 @@ class SimplexHasse:
         neuron1_pos = neuron1 - self.type_base[neuron1_type]
         neuron2_type = self.get_type(neuron2)
         neuron2_pos = neuron2 - self.type_base[neuron2_type]
-        return self.h5["connectivity"][neuron1_type][neuron2_type]["cMat"][neuron1_pos][neuron2_pos] == 1
+        return self.cMat[neuron1_type][neuron2_type][neuron1_pos][neuron2_pos] == 1
 
-    def make_hasse(self, full=True):
+    def make_hasse(self, full=False):
         """
         Makes the hasse diagram.
         Full=False does not complete simplifies
@@ -92,6 +114,7 @@ class SimplexHasse:
             src[neuron] = []
         dim_list[1] = []
         for neuron1 in range(self.number_of_neurons):
+            # print(neuron1)
             for neuron2 in range(self.number_of_neurons):
                 if neuron1 == neuron2:
                     continue
@@ -140,7 +163,7 @@ class SimplexHasse:
                 break
             return dim_list
 
-    def get_flag_file(self, output_file, full=True):
+    def get_flag_file(self, output_file, full=False):
         with open(output_file, "w") as f:
             dim_list = self.make_hasse(full=full)
             f.write("dim 0\n")
@@ -152,11 +175,12 @@ class SimplexHasse:
                     str_simplex = [str(i) for i in simplex]
                     f.write(" ".join(str_simplex) + "\n")
 
+
 if __name__ == "__main__":
-    test = SimplexHasse(["L4_NGC"], h5)
-    non_full_test = test.make_hasse(full=False)
-    full_test = test.make_hasse(full=True)
-    test.get_flag_file("test_NGC.flag", full=False)
-    test2 = SimplexHasse([], h5)
+    test = SimplexHasse(["L4"], [], h5, is_h5=True)
+    # non_full_test = test.make_hasse(full=False)
+    # full_test = test.make_hasse(full=True)
+    test.get_flag_file("test_L4.flag", full=False)
+    # test2 = SimplexHasse([], [], h5)
     print("DONE")
 
