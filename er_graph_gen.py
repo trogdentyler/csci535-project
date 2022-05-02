@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 for i in range(6):
-    n = 1000   
+    n = 5000   
     # m = 0.004 * n * (n-1)  
     p = 0.04
     G = nx.erdos_renyi_graph(n, p)

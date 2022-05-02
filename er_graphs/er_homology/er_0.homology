@@ -1,12 +1,16 @@
 # Cell counts (of dimensions between 0 and 5):
-1000 20008 10576 169 1 0
+5000 500233 1335845 107640 257 0
 # Euler characteristic:
--8600
+733229
+# Skipped columns of the coboundary matrix (in dimensions between 0 and 4):
+0 3230 0 0 0 
 # Betti numbers (between 0 and 4):
-1 8601 0 0 0 
+1 179 736637 0 0 
 # Cell counts (of dimensions between 0 and 5):
-1000 20008 10576 169 1 0
+5000 500233 1335845 107640 257 0
 # Euler characteristic:
--8600
+733229
+# Skipped columns of the coboundary matrix (in dimensions between 0 and 4):
+0 3230 0 0 0 
 # Betti numbers (between 0 and 4):
-1 8601 0 0 0 
+1 179 736637 0 0 
