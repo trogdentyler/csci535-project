@@ -3,7 +3,7 @@ import numpy as np
 import bisect
 
 h5 = h5py.File("circuit_data/connectome_data/cons_locs_pathways_mc6_Column/cons_locs_pathways_mc6_Column.h5")
-count = True
+count = False
 
 if count:
     number_of_connection = 0

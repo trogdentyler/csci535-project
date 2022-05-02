@@ -6,7 +6,7 @@ the edges between any two neurons being determined by the probabilities given in
 the pathways_anatomy_factsheets_simplified.json
 """
 
-old = False # variable that determines if old method is used.
+old = False  # variable that determines if old method is used.
 
 class Node:
     def __init__(self, layer, type):
@@ -32,10 +32,14 @@ layer_counts = dict()
 cell_connections = dict()
 connections_prob = dict()
 
+scale_factor = 5
+
 layers = [key for key, value in layer_data.items()]
 
 for layer in layers:
-    layer_counts[layer] = layer_data[layer]["No. of neurons per morphological types"]
+    layer_counts[layer] = dict()
+    for key in layer_data[layer]["No. of neurons per morphological types"]:
+        layer_counts[layer][key] = max(1,layer_data[layer]["No. of neurons per morphological types"][key]//scale_factor)
 
 for key, value in layer_counts.items():
     for k, v in value.items():
@@ -77,8 +81,8 @@ neuron_types = ['L1_DAC', 'L1_DLAC', 'L1_HAC', 'L1_NGC-DA', 'L1_NGC-SA', 'L1_SLA
 
 num_of_connections = 0
 cMat = dict()
-Layers = ["L4"]
-seed(23)
+Layers = ["L1", "L4", "L5", "L23", "L6"]
+seed(12)
 for m_type1 in neuron_types:
     layer1 = m_type1.split("_")[0]
     if layer1 not in Layers:
@@ -87,12 +91,12 @@ for m_type1 in neuron_types:
         cMat[m_type1] = dict()
         for m_type2 in neuron_types:
             layer2 = m_type2.split("_")[0]
+            cMat[m_type1][m_type2] = [[0 for i in range(layer_counts[layer2][m_type2])]
+                                      for j in range(layer_counts[layer1][m_type1])]
             if layer2 not in Layers:
                 continue
             try:
                 prob = connections_prob[m_type1 + ":" + m_type2]
-                cMat[m_type1][m_type2] = [[0 for i in range(layer_counts[layer2][m_type2])]
-                                          for j in range(layer_counts[layer1][m_type1])]
                 for i in range(layer_counts[layer1][m_type1]):
                     for j in range(layer_counts[layer2][m_type2]):
                         if random() * 100 < prob:
@@ -100,4 +104,4 @@ for m_type1 in neuron_types:
                             num_of_connections += 1
             except KeyError:
                 continue
-
+print(f"NUMBER OF RANDOM CONNECTIONS: {num_of_connections}")
