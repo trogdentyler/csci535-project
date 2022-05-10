@@ -1,0 +1,93 @@
+load_file("nrngui.hoc")
+
+objref cvode
+cvode = new CVode()
+cvode.active(0)
+
+//======================== settings ===================================
+
+hyp_amp = -0.033325
+step_amp = 0.0929676
+tstop = 3000
+
+//=================== creating cell object ===========================
+load_file("import3d.hoc")
+objref cell
+
+load_file("morphology.hoc")
+load_file("biophysics.hoc")
+load_file("template.hoc")
+cell = new bNAC219_L4_DBC_d8f154e8e3()
+
+//==================== stimulus settings ===========================
+
+objref hypamp_st
+
+hypamp_st = new IClamp(0.5)
+hypamp_st.dur = tstop
+hypamp_st.del = 0
+hypamp_st.amp = hyp_amp
+
+cell.soma hypamp_st
+
+objref st1
+
+st1 = new IClamp(0.5)
+st1.dur = 2000
+st1.del = 700
+st1.amp = step_amp
+
+cell.soma st1
+
+//==================== recording settings ==========================
+objref time, voltage
+
+voltage = new Vector()
+time = new Vector()
+
+access cell.soma
+time.record(&t, 0.1)
+voltage.record(&v(0.5), 0.1)
+
+//======================= plot settings ============================
+
+objref gV
+
+gV = new Graph(0)
+// access cell.axon
+// access cell.soma
+gV.addvar("soma","v(0.5)",1,1)
+gV.view(0, -80, 3000, 120, 39, 314, 369.6, 332.8)
+graphList[0].append(gV)
+
+objref sP
+
+sP = new PlotShape(0)
+//sP.size(-594.956,665.296,-81.9308,1074.28)
+sP.variable("soma", "v(0.5)")
+
+sP.view(-594.956, -98.0373, 1260.25, 1188.42, 431, 45, 629.76, 592)
+sP.exec_menu("Shape Plot")
+
+fast_flush_list.append(sP)                                      
+sP.save_name("fast_flush_list.")
+
+//============================= simulation ================================
+
+printf("Running step 1")
+
+run()
+
+//============================= saving results ============================
+
+objref timevoltage
+timevoltage = new Matrix(time.size(), 2)
+timevoltage.setcol(0, time)
+timevoltage.setcol(1, voltage)
+
+objref fh
+
+fh = new File()
+fh.wopen("hoc_recordings/soma_voltage_step1.dat")
+timevoltage.fprint(0, fh, "%e ")
+fh.close()

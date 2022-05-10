@@ -1,2 +1,2 @@
-nrnivmodl ./mechanisms
-./run.py "$@"
+nrnivmodl ./channels
+./run.py
