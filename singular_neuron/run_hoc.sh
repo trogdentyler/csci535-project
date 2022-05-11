@@ -1,2 +1,2 @@
-nrnivmodl ./mechanisms
+nrnivmodl ./channels
 nrngui mosinit.hoc
