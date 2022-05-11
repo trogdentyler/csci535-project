@@ -79,10 +79,11 @@ neuron_types = ['L1_DAC', 'L1_DLAC', 'L1_HAC', 'L1_NGC-DA', 'L1_NGC-SA', 'L1_SLA
                 'L5_UTPC', 'L6_BP', 'L6_BPC', 'L6_BTC', 'L6_ChC', 'L6_DBC', 'L6_IPC', 'L6_LBC', 'L6_MC', 'L6_NBC',
                 'L6_NGC', 'L6_SBC', 'L6_TPC_L1', 'L6_TPC_L4', 'L6_UTPC']
 
+SEED = 23
 num_of_connections = 0
 cMat = dict()
 Layers = ["L1", "L4", "L5", "L23", "L6"]
-seed(12)
+seed(SEED)
 for m_type1 in neuron_types:
     layer1 = m_type1.split("_")[0]
     if layer1 not in Layers:
@@ -99,7 +100,9 @@ for m_type1 in neuron_types:
                 prob = connections_prob[m_type1 + ":" + m_type2]
                 for i in range(layer_counts[layer1][m_type1]):
                     for j in range(layer_counts[layer2][m_type2]):
-                        if random() * 100 < prob:
+                        if m_type1 == m_type2 and i == j:
+                            continue
+                        elif random() * 100 < prob:
                             cMat[m_type1][m_type2][i][j] = 1
                             num_of_connections += 1
             except KeyError:

@@ -9,10 +9,9 @@ class HasseBuilder:
     def make_hasse(self, full=False):
         """
         Makes the hasse diagram.
-        Full=False does not complete simplifies
+        Full=False does not complete simplicies
 
-        SUPER SLOW! Runs in O(n^6) (O(E^3) really but hey) at least.
-        Still better then O(n!) however.
+        SUPER SLOW!
         """
         dim_list = dict()  # list of simplices by dimension
         ver = dict()  # zero faces of a simplex, zero simplices are set [] though
@@ -32,7 +31,8 @@ class HasseBuilder:
                 if neuron1 == neuron2:
                     continue
                 if self.are_connected(neuron1, neuron2):
-                    dim_list[1].append((neuron1, neuron2))  # linter is confused ignore this
+                    # noinspection PyTypeChecker
+                    dim_list[1].append((neuron1, neuron2))
                     ver[neuron1, neuron2] = (neuron1, neuron2)
                     tar[neuron1, neuron2] = [neuron1, neuron2]
                     src[neuron1].append((neuron1, neuron2))

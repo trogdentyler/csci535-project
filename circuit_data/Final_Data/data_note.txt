@@ -1,0 +1,26 @@
+Notes about the data:
+The data here is for random graphs that were produced using the physiological fact sheet and for the neocortical columns “Average” dataset from Markram paper.
+The random graphs have about 1/5 the neurons of the neocortical columns to allows us to generate them in a reasonable time.
+More precisely, we have that the number of neurons any given type in any given layer is equal to number of neuron specified in the physiological data sheet divided by 5 rounded down.
+If number of neuron specified in the the physiological data sheet divided by 5 rounded down would be zero, we instead set it to zero.
+In order for us to be able to reasonable compute the homology of direct flag complex - we restrict our cell too analyzing only the graphs be formed between neurons in the same layer or between two different layers.
+The labels “L4” in layer columns indicates the data was generated using neurons from the 4th layer and the label “L4_L23” would indicate the data was generated only using neuron with 4th layer and 23rd layer.
+
+
+The two numbers in the name of the random samples represent the random seed given to the python random model to generate them.
+Samples Random 12, 15, 17 maybe have issues due to the fact they where generated so that nodes may have edges to them self.
+This structure is not allowed in directed flag complex so the result maybe thrown off.
+Samples Random 23, 24, 25 do not suffer from this problem.
+	
+
+For approximations, we have that inputs under 3 MB are run generally run with no approximation.
+Inputs between 3 MB and 10 MB are run with an approximation parameter of Flagser set 100,000.
+This means any column of boundary matrix with over 100,000 1’s is not reduced and skipped.
+Inputs over 10 MB are run with an approximation parameter of Flagser set to 10,000.
+This means any column of boundary matrix with over 100,000 1’s is not reduced and skipped.
+
+Approximation for the samples Random 23, 24, 25 are approximated differently due to me trying to get the data faster.
+Files under the size 2.5 MB are not approximated, layer pair “L4_L5” is approximated with the approximation parameter set 100000, and all other data is approximated with the approximation parameter set to 5 MB.
+
+https://docs.google.com/spreadsheets/d/1KlhBWZ_SLdoUl8AYk0aLjw6aheYIny0X55PdxSmx_08/edit?usp=sharing
+
